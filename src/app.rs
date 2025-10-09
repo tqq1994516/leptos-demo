@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::{
     components::{Route, Router, Routes},
+    hooks::use_url,
     path,
 };
 
@@ -26,6 +27,26 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
+        <nav>
+            <ul>
+                <li>
+                    <a
+                        class=("menu-active", move || use_url()().path() == "/")
+                        href="/"
+                    >
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a
+                        class=("menu-active", move || use_url()().path() == "/b")
+                        href="/b"
+                    >
+                        CutImage
+                    </a>
+                </li>
+            </ul>
+        </nav>
         <Router>
             <main>
                 <Routes fallback=|| "Not found.">
