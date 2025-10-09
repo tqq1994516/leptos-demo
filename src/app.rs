@@ -27,6 +27,14 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
+        <Router>
+            <main>
+                <Routes fallback=|| "Not found.">
+                    <Route path=path!("") view=B/>
+                    <Route path=path!("b") view=A/>
+                </Routes>
+            </main>
+        </Router>
         <nav>
             <ul>
                 <li>
@@ -47,14 +55,6 @@ pub fn App() -> impl IntoView {
                 </li>
             </ul>
         </nav>
-        <Router>
-            <main>
-                <Routes fallback=|| "Not found.">
-                    <Route path=path!("") view=B/>
-                    <Route path=path!("b") view=A/>
-                </Routes>
-            </main>
-        </Router>
     }
 }
 
