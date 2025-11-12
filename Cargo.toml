@@ -9,11 +9,11 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 console_error_panic_hook = "0.1"
 leptos_meta = "0.8.5"
-leptos = { version = "0.8.10", features = ["islands", "islands-router", "tracing", "nightly"] }
-leptos_router = { version = "0.8.8", features = ["nightly", "tracing"]}
+leptos = { version = "0.8.12", features = ["islands", "islands-router", "tracing", "nightly"] }
+leptos_router = { version = "0.8.9", features = ["nightly", "tracing"]}
 leptos_axum = { version = "0.8.6", features = ["islands-router", "tracing"], optional = true }
 
-wasm-bindgen = "=0.2.104"
+wasm-bindgen = "=0.2.105"
 axum = { version = "0.8", optional = true }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true}
 
@@ -77,3 +77,5 @@ lib-features = ["hydrate"]
 lib-default-features = false
 
 lib-profile-release = "wasm-release"
+
+disable-erase-components = true

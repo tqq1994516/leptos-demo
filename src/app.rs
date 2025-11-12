@@ -29,20 +29,41 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Not found.">
-                    <Route path=path!("") view=B/>
-                    <Route path=path!("b") view=A/>
+                    <Route path=path!("") view=A/>
                 </Routes>
             </main>
         </Router>
     }
 }
 
-#[component]
+#[island(lazy)]
 pub fn A() -> impl IntoView {
-    view! { <a href="/">a</a> }
+    let add_todo_action = Action::new(|_: &String| {
+        async { 
+            std::thread::sleep(std::time::Duration::from_millis(250));
+        }
+    });
+    let data = Resource::new(move || add_todo_action.version()(), move |_| data());
+    view! {
+        <button on:click=move |_| { add_todo_action.dispatch("".to_string()); }>add</button>
+        <Suspense fallback=|| "Loading...">
+            {
+                move || Suspend::new(async move {
+                    data.await.map(|data| {
+                        view! {
+                            <div>
+                                "Data: " {data}
+                            </div>
+                        }
+                    })
+                })
+            }
+        </Suspense>
+    }
 }
 
-#[component]
-pub fn B() -> impl IntoView {
-    view! { <a href="/b">b</a> }
+#[server]
+#[lazy]
+async fn data() -> Result<Vec<i8>, ServerFnError> {
+    Ok(vec![1, 2, 3])
 }
