@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 console_error_panic_hook = "0.1"
 leptos_meta = "0.8.5"
-leptos = { version = "0.8.12", features = ["tracing", "nightly"] }
+leptos = { version = "0.8.12", features = ["tracing", "nightly", "rkyv"] }
 leptos_router = { version = "0.8.9", features = ["nightly", "tracing"]}
 leptos_axum = { version = "0.8.6", features = ["tracing"], optional = true }
 serde = { version = "1", features = ["derive"]}
@@ -17,6 +17,7 @@ serde = { version = "1", features = ["derive"]}
 wasm-bindgen = "=0.2.105"
 axum = { version = "0.8", optional = true }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true}
+rkyv = "0.8"
 
 [features]
 hydrate = ["leptos/hydrate"]
@@ -24,6 +25,8 @@ ssr = [
     "dep:axum",
     "dep:tokio",
     "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
     "dep:leptos_axum",
 ]
 

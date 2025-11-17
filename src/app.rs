@@ -1,6 +1,6 @@
-use leptos::prelude::*;
+use leptos::{prelude::*, server_fn::codec::Rkyv};
 use leptos_router::{
-    components::{Route, Router, Routes},
+    components::{Route, Router, Routes, Outlet, ParentRoute},
     Lazy, LazyRoute, lazy_route,
     path,
 };
@@ -31,7 +31,9 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Not found.">
-                    <Route path=path!("") view={Lazy::<DataView>::new()}/>
+                    <ParentRoute path=path!("") view=MyLayout>
+                        <Route path=path!("") view={Lazy::<DataView>::new()}/>
+                    </ParentRoute>
                 </Routes>
             </main>
         </Router>
@@ -88,7 +90,16 @@ pub(crate) fn ProjectItem(
     }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[component]
+pub(crate) fn MyLayout() -> impl IntoView {
+    view! {
+        <div>
+            <Outlet />
+        </div>
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 struct Item {
     id: String,
     name: String,
@@ -150,7 +161,7 @@ impl LazyRoute for DataView {
 
 
 
-#[server]
+#[server(output = Rkyv)]
 #[lazy]
 async fn data() -> Result<Vec<Item>, ServerFnError> {
     Ok(vec![
