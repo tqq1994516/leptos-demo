@@ -150,9 +150,11 @@ impl LazyRoute for DataView {
             <div class="overflow-x-auto">
                 <table class="table">
                     <ProjectTableHead />
-                    <Suspense fallback=move || view! { <div class="loading"></div> }>
-                        {items}
-                    </Suspense>
+                    <tbody>
+                        <Suspense fallback=move || view! { <div class="loading"></div> }>
+                            {items}
+                        </Suspense>
+                    </tbody>
                 </table>
             </div>
         }.into_any()
