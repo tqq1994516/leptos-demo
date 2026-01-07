@@ -38,6 +38,9 @@ pub fn App() -> impl IntoView {
                         <ParentRoute path=path!("/project-manager/:id/") view=SubLayout>
                             <Route path=path!("user-manager") view=C/>
                         </ParentRoute>
+                        <ParentRoute path=path!("/project-managera") view=SubLayoutA>
+                            <Route path=path!("user-manager") view=D/>
+                        </ParentRoute>
                     </ParentRoute>
                 </Routes>
             </main>
@@ -47,12 +50,36 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn Layout() -> impl IntoView {
+    // let ctx = expect_context::<Ctx>();
+    // debug_warn!("Layout ctx:{ctx:#?}");
     view! { <Outlet /> }
 }
 
 #[component]
 pub fn SubLayout() -> impl IntoView {
+    // let ctx = expect_context::<Ctx>();
+    // debug_warn!("SubLayout ctx:{ctx:#?}");
+    let data = Resource::new(move || (), move |()| project_list());
 
+    let projects = move || {
+        Suspend::new(async move {
+            data
+                .await
+                .map(|value| view! {
+                    <p>{value}</p>
+                })
+        })
+    };
+    view! {
+        <Suspense fallback=move || view! { <div class="loading"></div> }>{projects}</Suspense>
+        <Outlet />
+    }
+}
+
+#[component]
+pub fn SubLayoutA() -> impl IntoView {
+    let ctx = expect_context::<Ctx>();
+    debug_warn!("SubLayoutA ctx:{ctx:#?}");
     let data = Resource::new(move || (), move |()| project_list());
 
     let projects = move || {
@@ -72,13 +99,18 @@ pub fn SubLayout() -> impl IntoView {
 
 #[component]
 pub fn A() -> impl IntoView {
-    view! { <a href="/project-manager/1">b</a> }
+    // let ctx = expect_context::<Ctx>();
+    // debug_warn!("A ctx:{ctx:#?}");
+    view! {
+        <a href="/project-manager/1">b</a>
+        <a href="/project-managera/user-manager">d</a>
+    }
 }
 
 #[component]
 pub fn B() -> impl IntoView {
     let ctx = expect_context::<Ctx>();
-    debug_warn!("ctx:{ctx:#?}");
+    debug_warn!("B ctx:{ctx:#?}");
 
     let data = Resource::new(move || (), move |()| project_list());
 
@@ -101,8 +133,29 @@ pub fn B() -> impl IntoView {
 #[component]
 pub fn C() -> impl IntoView {
     let ctx = expect_context::<Ctx>();
-    debug_warn!("ctx:{ctx:#?}");
+    debug_warn!("C ctx:{ctx:#?}");
+    let data = Resource::new(move || (), move |()| project_list());
 
+    let projects = move || {
+        Suspend::new(async move {
+            data
+                .await
+                .map(|value| view! {
+                    <p>{value}</p>
+                })
+        })
+    };
+
+    view! {
+        <a href="/">a</a>
+        <Suspense fallback=move || view! { <div class="loading"></div> }>{projects}</Suspense>
+    }
+}
+
+#[component]
+pub fn D() -> impl IntoView {
+    let ctx = expect_context::<Ctx>();
+    debug_warn!("D ctx:{ctx:#?}");
     let data = Resource::new(move || (), move |()| project_list());
 
     let projects = move || {
@@ -129,7 +182,7 @@ pub fn C() -> impl IntoView {
 pub(crate) async fn project_list() -> Result<String, ServerFnError> {
     let ctx = expect_context::<Ctx>();
 
-    debug_warn!("ctx:{ctx:#?}");
+    debug_warn!("server fn ctx:{ctx:#?}");
 
     Ok(String::from("test1"))
 }
